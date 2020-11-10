@@ -3,7 +3,7 @@
 		{
 			"target_name": "index",
 			"sources": [
-				"Main.cpp"
+				"main.cc"
 			],
 			"include_dirs": [
 				"<!@(node -p \"require('node-addon-api').include\")",

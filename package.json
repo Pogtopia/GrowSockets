@@ -2,14 +2,18 @@
   "name": "growsockets",
   "version": "0.0.1",
   "description": "A simple, high-level api for creating private servers for Growtopia with NodeJS.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "dependencies": {
+    "@types/node": "^14.14.7",
     "node-addon-api": "^3.0.2"
   },
   "devDependencies": {},
   "scripts": {
+    "install": "(cd native && node-gyp configure build -j 8) && (npm run transpile)",
+    "transpile": "rm -rf dist && mkdir dist && cd src && tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Alexander9673",
-  "license": "MIT"
+  "license": "MIT",
+  "typings": "dist/index.d.ts"
 }

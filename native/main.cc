@@ -45,6 +45,8 @@ void __send(ARG) {
 Napi::Object __reg(Napi::Env env, Napi::Object exports) {
   exports["init"] = Napi::Function::New(env, __init);
   exports["send"] = Napi::Function::New(env, __send);
+
+  return exports;
 }
 
 NODE_API_MODULE(GrowSockets, __reg)
