@@ -4,15 +4,15 @@
 
 #define ARG Napi::CallbackInfo& info
 
-std::unordered_map<uint32_t, ENetPeer*> peers;
+std::unordered_map<unsigned int, ENetPeer*> peers;
 ENetHost* host;
 Napi::FunctionReference emitter;
 
-uint32_t netID = 0;
+unsigned int netID = 0;
 
 void __init(ARG) {
-  Napi::Env env = info.Env();
-  uint32_t port = info[0].ToNumber().Uint32Value();
+  Napi::Env env     = info.Env();
+  unsigned int port = info[0].ToNumber().Uint32Value();
 
   if (enet_initialize() != 0)
     return Napi::Error::New(env, "ENet failed to Initialize.").ThrowAsJavaScriptException();
@@ -29,14 +29,14 @@ void __init(ARG) {
 void __send(ARG) {
   Napi::Env env = info.Env();
 
-  uint32_t peerID  = info[0].ToNumber().Uint32Value();
-  uint32_t count   = info[1].ToNumber().Uint32Value();
+  unsigned int peerID  = info[0].ToNumber().Uint32Value();
+  unsigned int count   = info[1].ToNumber().Uint32Value();
   Napi::Object arr = info[2].ToObject();
 
   auto peer = peers[peerID];
   if (!peer || peer->state != ENET_PEER_STATE_CONNECTED) return;
 
-  for (uint32_t i = 0; i < count; ++i) {
+  for (unsigned int i = 0; i < count; ++i) {
     auto buffer = arr.Get(i).As<Napi::Buffer<unsigned char>>();
     auto packet = enet_packet_create(buffer.Data(),
                                     buffer.Length(),
@@ -56,12 +56,12 @@ void __accept(ARG) {
 
   if (enet_host_service(host, &event, 0) > 0)
     switch (event.type) {
-      uint32_t lastNetID = netID++;
-      event.peer->data   = new uint8_t[sizeof(uint32_t)];
-
-      *(uint32_t*)event.peer->data = lastNetID;
-
       case ENET_EVENT_TYPE_CONNECT: {
+        unsigned int lastNetID = netID++;
+        event.peer->data   = new unsigned char[sizeof(unsigned int)];
+
+        *(unsigned int*)event.peer->data = lastNetID;
+
         emitter.Call({
           Napi::String::New(env, "connect"),
           Napi::Number::New(env, lastNetID)
@@ -76,13 +76,10 @@ void __accept(ARG) {
         emitter.Call({
           Napi::String::New(env, "data"),
           Napi::Number::New(env, *(int*)event.peer->data),
-          Napi::Buffer<uint8_t>::New(env,
+          Napi::Buffer<unsigned char>::New(env,
                                     packet,
                                     event.packet->dataLength,
-                                    [](Napi::Env env, uint8_t* data)
-          {
-            delete[] data;
-          })
+                                    Finalizer<unsigned char>)
         });
 
         enet_packet_destroy(event.packet);
@@ -90,7 +87,7 @@ void __accept(ARG) {
       }
 
       case ENET_EVENT_TYPE_DISCONNECT: {
-        uint32_t userNetID = *(uint32_t*)event.peer->data;
+        unsigned int userNetID = *(unsigned int*)event.peer->data;
         
         emitter.Call({
           Napi::String::New(env, "disconnect"),
@@ -120,12 +117,12 @@ void __set_emitter(ARG) {
 }
 
 Napi::Object __reg(Napi::Env env, Napi::Object exports) {
-  exports["init"]     = Napi::Function::New(env, __init);
-  exports["send"]     = Napi::Function::New(env, __send);
-  exports["accept"]   = Napi::Function::New(env, __accept);
-  exports["setNetID"] = Napi::Function::New(env, __set_netID);
-  exports["deInit"]   = Napi::Function::New(env, __close);
-  exports["emitter"]  = Napi::Function::New(env, __set_emitter);
+  exports["init"]        = Napi::Function::New(env, __init);
+  exports["send"]        = Napi::Function::New(env, __send);
+  exports["accept"]      = Napi::Function::New(env, __accept);
+  exports["setNetID"]    = Napi::Function::New(env, __set_netID);
+  exports["deInit"]      = Napi::Function::New(env, __close);
+  exports["emitter"]     = Napi::Function::New(env, __set_emitter);
 
   return exports;
 }

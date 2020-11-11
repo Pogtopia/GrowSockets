@@ -1,4 +1,4 @@
-const native = require("../native/build/Release/index.node");
+const native = require("../../native/build/Release/index.node");
 
 /**
  * A simple wrapper for the native module.

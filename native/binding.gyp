@@ -15,7 +15,7 @@
 			"conditions": [
 				['OS=="linux"', {
 						"libraries": [
-							"-lenet"
+							"-lenet",
 						]
 					}
 				],

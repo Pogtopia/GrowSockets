@@ -9,9 +9,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "install": "(cd native && node-gyp configure build -j 8) && (npm run transpile)",
-    "transpile": "rm -rf dist && mkdir dist && cd src && tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install": "(cd native && node-gyp configure build -j 8 --release) && (npm run transpile)",
+    "transpile": "rm -rf dist && mkdir dist && cd src && tsc"
   },
   "author": "Alexander9673",
   "license": "MIT",
