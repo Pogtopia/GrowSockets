@@ -10,6 +10,11 @@ Napi::FunctionReference emitter;
 
 unsigned int netID = 0;
 
+template <typename T>
+void __finalizer(Napi::Env env, T* data) {
+  delete[] data;
+}
+
 void __init(ARG) {
   Napi::Env env     = info.Env();
   unsigned int port = info[0].ToNumber().Uint32Value();
@@ -79,7 +84,7 @@ void __accept(ARG) {
           Napi::Buffer<unsigned char>::New(env,
                                     packet,
                                     event.packet->dataLength,
-                                    Finalizer<unsigned char>)
+                                    __finalizer<unsigned char>)
         });
 
         enet_packet_destroy(event.packet);
