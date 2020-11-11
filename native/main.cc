@@ -16,8 +16,8 @@ void __finalizer(Napi::Env env, T* data) {
 }
 
 void __init(ARG) {
-  Napi::Env env     = info.Env();
-  unsigned int port = info[0].ToNumber().Uint32Value();
+  auto env  = info.Env();
+  auto port = info[0].As<Napi::Number>().Uint32Value();
 
   if (enet_initialize() != 0)
     return Napi::Error::New(env, "ENet failed to Initialize.").ThrowAsJavaScriptException();
@@ -32,11 +32,11 @@ void __init(ARG) {
 }
 
 void __send(ARG) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
-  unsigned int peerID  = info[0].ToNumber().Uint32Value();
-  unsigned int count   = info[1].ToNumber().Uint32Value();
-  Napi::Object arr = info[2].ToObject();
+  auto peerID  = info[0].As<Napi::Number>().Uint32Value();
+  auto count   = info[1].As<Napi::Number>().Uint32Value();
+  auto arr     = info[2].As<Napi::Object>();
 
   auto peer = peers[peerID];
   if (!peer || peer->state != ENET_PEER_STATE_CONNECTED) return;
@@ -52,7 +52,7 @@ void __send(ARG) {
 }
 
 void __accept(ARG) {
-  Napi::Env env = info.Env();
+  auto env = info.Env();
 
   if (!emitter)
     return Napi::Error::New(env, "Can't watch for events without the emit function.").ThrowAsJavaScriptException();
@@ -62,10 +62,11 @@ void __accept(ARG) {
   if (enet_host_service(host, &event, 0) > 0)
     switch (event.type) {
       case ENET_EVENT_TYPE_CONNECT: {
-        unsigned int lastNetID = netID++;
-        event.peer->data   = new unsigned char[sizeof(unsigned int)];
+        auto lastNetID   = netID++;
+        event.peer->data = new unsigned char[sizeof(unsigned int)];
 
-        *(unsigned int*)event.peer->data = lastNetID;
+        *reinterpret_cast<unsigned char*>(event.peer->data) = lastNetID;
+        peers[lastNetID] = event.peer;
 
         emitter.Call({
           Napi::String::New(env, "connect"),
@@ -80,7 +81,7 @@ void __accept(ARG) {
 
         emitter.Call({
           Napi::String::New(env, "data"),
-          Napi::Number::New(env, *(int*)event.peer->data),
+          Napi::Number::New(env, *reinterpret_cast<unsigned int*>(event.peer->data)),
           Napi::Buffer<unsigned char>::New(env,
                                     packet,
                                     event.packet->dataLength,
@@ -92,7 +93,7 @@ void __accept(ARG) {
       }
 
       case ENET_EVENT_TYPE_DISCONNECT: {
-        unsigned int userNetID = *(unsigned int*)event.peer->data;
+        unsigned int userNetID = *reinterpret_cast<unsigned int*>(event.peer->data);
         
         emitter.Call({
           Napi::String::New(env, "disconnect"),
@@ -110,7 +111,7 @@ void __accept(ARG) {
 }
 
 void __set_netID(ARG) {
-  netID = info[0].ToNumber().Uint32Value();
+  netID = info[0].As<Napi::Number>().Uint32Value();
 }
 
 void __close(ARG) {
@@ -121,13 +122,40 @@ void __set_emitter(ARG) {
   emitter = Napi::Persistent(info[0].As<Napi::Function>());
 }
 
+void __send_text_packet_native(ARG) {
+  auto userNetID = info[0].As<Napi::Number>().Uint32Value();
+  auto peer      = peers[userNetID];
+
+  if (!peer) return;
+
+  auto type = info[1].As<Napi::Number>().Uint32Value();
+  auto str  = info[2].As<Napi::String>().Utf8Value();
+
+  // sizes + packet
+  auto strLen    = str.size();
+  auto typeSize  = sizeof(unsigned int);
+  auto totalSize = strLen + typeSize + 1;
+  auto bytes     = new unsigned char[totalSize];
+
+  *bytes = type;
+  memcpy(bytes + 4, str.c_str(), strLen);
+
+  ENetPacket* packet = enet_packet_create(bytes,
+                                          totalSize,
+                                          ENET_PACKET_FLAG_RELIABLE);
+
+  enet_peer_send(peer, 0, packet);                      
+  delete[] bytes;
+}
+
 Napi::Object __reg(Napi::Env env, Napi::Object exports) {
-  exports["init"]        = Napi::Function::New(env, __init);
-  exports["send"]        = Napi::Function::New(env, __send);
-  exports["accept"]      = Napi::Function::New(env, __accept);
-  exports["setNetID"]    = Napi::Function::New(env, __set_netID);
-  exports["deInit"]      = Napi::Function::New(env, __close);
-  exports["emitter"]     = Napi::Function::New(env, __set_emitter);
+  exports["init"]                    = Napi::Function::New(env, __init);
+  exports["send"]                    = Napi::Function::New(env, __send);
+  exports["accept"]                  = Napi::Function::New(env, __accept);
+  exports["setNetID"]                = Napi::Function::New(env, __set_netID);
+  exports["deInit"]                  = Napi::Function::New(env, __close);
+  exports["emitter"]                 = Napi::Function::New(env, __set_emitter);
+  exports["send_text_packet_native"] = Napi::Function::New(env, __send_text_packet_native);
 
   return exports;
 }
