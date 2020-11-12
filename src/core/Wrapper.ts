@@ -49,20 +49,6 @@ const Wrapper = {
    * Set the emitter required by the server to emit events.
    */
   emitter: (emit: (...args: any[]) => any[]) => native.emitter(emit),
-
-  /**
-   * Native packet methods.
-   */
-  native: {
-    /**
-     * Send a text packet to the peer where packet creation is done natively.
-     * @param netID The netID of the peer.
-     * @param type The type of the text packet.
-     * @param text The string associated with the packet.
-     */
-    text: (netID: number, type: number, text: string): void =>
-      native.send_text_packet_native(netID, type, text),
-  },
 };
 
 export default Wrapper;

@@ -122,40 +122,13 @@ void __set_emitter(ARG) {
   emitter = Napi::Persistent(info[0].As<Napi::Function>());
 }
 
-void __send_text_packet_native(ARG) {
-  auto userNetID = info[0].As<Napi::Number>().Uint32Value();
-  auto peer      = peers[userNetID];
-
-  if (!peer) return;
-
-  auto type = info[1].As<Napi::Number>().Uint32Value();
-  auto str  = info[2].As<Napi::String>().Utf8Value();
-
-  // sizes + packet
-  auto strLen    = str.size();
-  auto typeSize  = sizeof(unsigned int);
-  auto totalSize = strLen + typeSize + 1;
-  auto bytes     = new unsigned char[totalSize];
-
-  *bytes = type;
-  memcpy(bytes + 4, str.c_str(), strLen);
-
-  ENetPacket* packet = enet_packet_create(bytes,
-                                          totalSize,
-                                          ENET_PACKET_FLAG_RELIABLE);
-
-  enet_peer_send(peer, 0, packet);                      
-  delete[] bytes;
-}
-
 Napi::Object __reg(Napi::Env env, Napi::Object exports) {
-  exports["init"]                    = Napi::Function::New(env, __init);
-  exports["send"]                    = Napi::Function::New(env, __send);
-  exports["accept"]                  = Napi::Function::New(env, __accept);
-  exports["setNetID"]                = Napi::Function::New(env, __set_netID);
-  exports["deInit"]                  = Napi::Function::New(env, __close);
-  exports["emitter"]                 = Napi::Function::New(env, __set_emitter);
-  exports["send_text_packet_native"] = Napi::Function::New(env, __send_text_packet_native);
+  exports["init"]     = Napi::Function::New(env, __init);
+  exports["send"]     = Napi::Function::New(env, __send);
+  exports["accept"]   = Napi::Function::New(env, __accept);
+  exports["setNetID"] = Napi::Function::New(env, __set_netID);
+  exports["deInit"]   = Napi::Function::New(env, __close);
+  exports["emitter"]  = Napi::Function::New(env, __set_emitter);
 
   return exports;
 }
