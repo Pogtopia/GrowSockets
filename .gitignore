@@ -107,4 +107,4 @@ dist
 native/build
 
 # Ignore typescript output folder
-out
+dist

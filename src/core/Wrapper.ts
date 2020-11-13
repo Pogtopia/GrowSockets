@@ -17,7 +17,7 @@ const Wrapper = {
    * @param count The amount of packets to send.
    * @param packets The packet to send. This is not an array, but it would be the rest of the arguments.
    */
-  send: (id: number, count: number, ...packets: Buffer[]): void =>
+  send: (id: number, count: number, packets: Buffer[]): void =>
     native.send(id, count, packets),
 
   /**
