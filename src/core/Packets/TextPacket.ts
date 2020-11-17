@@ -1,7 +1,7 @@
 /**
  * TextPacket class to create text packets such as for actions or other uses.
  */
-export default class TextPacket {
+class TextPacket {
   /**
    * Creates a new TextPacket class
    * @param type The type of the packet.
@@ -15,7 +15,7 @@ export default class TextPacket {
    * @param strings Strings to include to the packet. They are not arrays, but instead they are arguments for the function.
    */
   public static from(type: number, ...strings: string[]) {
-    new TextPacket(type, strings);
+    return new TextPacket(type, strings);
   }
 
   /**
@@ -43,3 +43,5 @@ export default class TextPacket {
     return buffer;
   }
 }
+
+export default TextPacket;

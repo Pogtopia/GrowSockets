@@ -31,4 +31,9 @@ export interface Config {
    * The options for the HTTP server.
    */
   http?: HTTPOptions;
+
+  /**
+   * The cache manager to use.
+   */
+  cache?: any;
 }

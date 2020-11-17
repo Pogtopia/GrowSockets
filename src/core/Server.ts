@@ -2,12 +2,15 @@ import { EventEmitter } from "events";
 import Wrapper from "./Wrapper";
 
 // types
-import { Config } from "./types/Config";
+import { Config } from "./Types/Config";
 import Http from "./Http";
+import DefaultCache from "./Cache/Default";
 
 class Server extends EventEmitter {
   constructor(public config: Config = {}) {
     super();
+
+    if (!this.config.cache) this.config.cache = new DefaultCache();
 
     if (!this.config.http)
       this.config.http = {
