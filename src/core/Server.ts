@@ -1,31 +1,36 @@
 import { EventEmitter } from "events";
 import Wrapper from "./Wrapper";
-
-// types
-import { Config } from "./Types/Config";
 import Http from "./Http";
 import DefaultCache from "./Cache/Default";
 
+// types
+import { Config } from "./Types/Config";
+import { Cache } from "./Types/Cache";
+
 class Server extends EventEmitter {
-  constructor(public config: Config = {}) {
+  private port: number;
+  public cache: Cache;
+
+  constructor(config?: Config) {
     super();
 
-    if (!this.config.cache) this.config.cache = new DefaultCache();
-
-    if (!this.config.http)
-      this.config.http = {
-        serverIP: "127.0.0.1",
-        serverPort: 17091,
-        enabled: false,
+    if (config)
+      config = {
+        port: 17091,
+        http: {},
+        cache: new DefaultCache(),
       };
 
-    if (this.config.http.enabled) {
+    if (config.http.enabled) {
       this.log("HTTP Server Started.");
       Http(
-        this.config.http.serverPort || 17091,
-        this.config.http.serverIP || "127.0.0.1"
+        config.http.serverPort || 17091,
+        config.http.serverIP || "127.0.0.1"
       );
     }
+
+    this.cache = config.cache;
+    this.port = config.port;
   }
 
   /**
@@ -82,7 +87,7 @@ class Server extends EventEmitter {
    * Starts listening to the port to start the ENet Server.
    */
   public listen() {
-    const port = this.config.port || 17091;
+    const port = this.port || 17091;
 
     Wrapper.init(port);
     this.log("ENet Server now initiated on port.", port);

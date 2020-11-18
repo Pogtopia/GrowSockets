@@ -15,6 +15,21 @@ class Peer {
   }
 
   /**
+   * Fetches peer data from the cache (uses the netID)
+   */
+  public async getDataFromCache() {
+    const data = await this.server.cache.get(this.data.netID);
+    if (data) this.data = data;
+  }
+
+  /**
+   * Sets the user data in cache.
+   */
+  public async setDataToCache() {
+    return await this.server.cache.set(this.data.netID, this.data);
+  }
+
+  /**
    * Sends multiple packets to a single peer.
    * @param data An argument of packets that contains the `parse()` function or just an array of Buffers.
    */

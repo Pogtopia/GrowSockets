@@ -1,7 +1,9 @@
+import { Cache } from "../Types/Cache";
+
 /**
  * A class definition for the default cache.
  */
-class DefaultCache {
+class DefaultCache implements Cache {
   private data: any = {};
 
   /**
@@ -21,7 +23,7 @@ class DefaultCache {
    * @param key They key identifier.
    * @param val The value the key is associated with.
    */
-  set(key: string, val) {
+  set(key: any, val) {
     return (this.data[key] = val);
   }
 
@@ -29,7 +31,7 @@ class DefaultCache {
    * Removes a key from the cache.
    * @param key The key identifier.
    */
-  remove(key: string) {
+  remove(key: any) {
     return delete this.data[key];
   }
 
@@ -37,7 +39,7 @@ class DefaultCache {
    * Fetches the value of the key in the cache.
    * @param key The key identifier.
    */
-  get(key: string) {
+  get(key: any) {
     const data = this.data[key];
     try {
       return JSON.parse(data);
@@ -50,7 +52,7 @@ class DefaultCache {
    * Checks whether or not a key exists in the cache.
    * @param key The key indentifier.
    */
-  contains(key: string): boolean {
+  contains(key: any): boolean {
     return this.data.hasOwnProperty(key);
   }
 }
