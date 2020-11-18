@@ -4,7 +4,7 @@ Caching provides as the temporary data store which has fast read/writes ideal fo
 
 ## Standard
 
-When making custom cache for `GrowSockets`, there must be a **standard** followed.
+When making custom cache for `GrowSockets`, there must be a **standard** followed.  
 `keys(pattern: string) => string[]` - A method where you can fetch keys that match that specific pattern. (Not regex).
 
 `set(key: string, val: any) => any` - Sets or replace a specific key in the cache with the value specified.
