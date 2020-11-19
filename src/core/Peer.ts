@@ -1,5 +1,6 @@
 import Server from "./Server";
 import Wrapper from "./Wrapper";
+import Variant from "./Packets/Variant";
 
 // types
 import { Sendable } from "./Types/Sendable";
@@ -45,11 +46,25 @@ class Peer {
   public static send(netID: number, ...data: Sendable[]) {
     const packets = data.map((packet) => {
       if (Buffer.isBuffer(packet)) return packet;
-      else if (typeof (packet as any).parse === "function")
-        return packet.parse();
+      else {
+        switch (packet.constructor.name) {
+          case "TextPacket":
+          case "TankPacket": {
+            return packet.parse();
+          }
+
+          case "Variant": {
+            return (packet as Variant).parse().parse();
+          }
+
+          default: {
+            break;
+          }
+        }
+      }
     });
 
-    Wrapper.send(netID, packets.length, packets);
+    Wrapper.send(netID, packets.length, packets as any[]);
   }
 
   /**

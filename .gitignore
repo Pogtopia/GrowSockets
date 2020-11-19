@@ -108,3 +108,7 @@ native/build
 
 # Ignore typescript output folder
 dist
+
+# Ignore tests
+test.ts
+src/core/Database/data

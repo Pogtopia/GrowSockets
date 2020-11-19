@@ -25,7 +25,7 @@ class TextPacket {
   public static fromBuffer(packet: Buffer) {
     if (packet.length < 4) throw new Error("Invalid packet received.");
     const type = packet.readUInt32LE();
-    const str = packet.toString("utf-8", 4) ?? "";
+    const str = packet.toString("utf-8", 4).slice(0, -1) ?? "";
 
     return new TextPacket(type, str.split("\n"));
   }

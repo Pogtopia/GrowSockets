@@ -11,7 +11,7 @@
   "scripts": {
     "install": "(cd native && node-gyp configure build -j 8 --release) && (npm run transpile)",
     "transpile": "rm -rf dist && mkdir dist && cd src && tsc",
-    "test": "npm run transpile && node test"
+    "test": "ts-node --project src/tsconfig.json test"
   },
   "author": "Alexander9673",
   "license": "MIT",

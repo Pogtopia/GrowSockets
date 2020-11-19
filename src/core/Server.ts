@@ -3,7 +3,7 @@ import Wrapper from "./Wrapper";
 import Http from "./Http";
 import DefaultCache from "./Cache/Default";
 
-// types
+// Types
 import { Config } from "./Types/Config";
 import { Cache } from "./Types/Cache";
 
@@ -14,7 +14,7 @@ class Server extends EventEmitter {
   constructor(config?: Config) {
     super();
 
-    if (config)
+    if (!config)
       config = {
         port: 17091,
         http: {},
