@@ -9,11 +9,11 @@ const DATA_DIR = `${__dirname}/data`;
 class DefaultDb {
   private cache = {};
 
-  constructor() {
+  constructor(saveInterval: number = 60 * 30 * 1000) {
     if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR);
     setInterval(() => {
       this.save();
-    }, 60 * 30 * 1000); // save every 30 mins
+    }, saveInterval); // save every 30 mins
   }
 
   private async save() {
@@ -58,12 +58,13 @@ class DefaultDb {
         file = (await readFile(`${DATA_DIR}/${key}.dat`))?.toString();
       } catch {}
 
-      if (file)
+      if (file) {
         try {
-          this.cache[key] = JSON.parse(file);
-        } catch {
-          this.cache[key] = file;
-        }
+          file = JSON.parse(file);
+        } catch {}
+
+        this.cache[key] = file;
+      }
 
       return file;
     }
@@ -77,7 +78,7 @@ class DefaultDb {
    * @param data The data of the key.
    */
   public async set(key: any, data: any) {
-    this.cache[key] = data;
+    return (this.cache[key] = data);
   }
 }
 
