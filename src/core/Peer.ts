@@ -31,6 +31,29 @@ class Peer {
   }
 
   /**
+   * Gets the data of the peer with the rid.
+   * @param rid The rid of the peer
+   */
+  public async getDataFromDatabase(rid?: string) {
+    if (!rid) rid = this.data.rid;
+    const data = await this.server.db.get<PeerData>(rid);
+
+    if (data) {
+      data.netID = this.data.netID;
+      this.data = data;
+    }
+  }
+
+  /**
+   * Sets the data of the user to the database.
+   * @param rid The rid of the peer
+   */
+  public async setDataToDatabase(rid?: string) {
+    if (!rid) rid = this.data.rid;
+    this.server.db.set(rid, this.data);
+  }
+
+  /**
    * Sends multiple packets to a single peer.
    * @param data An argument of packets that contains the `parse()` function or just an array of Buffers.
    */

@@ -55,7 +55,7 @@ class DefaultDb implements Database {
    * Fetches data from the database.
    * @param key The unique key.
    */
-  public async get(key: any) {
+  public async get<T>(key: any): Promise<T> {
     const dataInCache = this.cache[key];
     if (dataInCache) return dataInCache;
     else {
@@ -76,6 +76,9 @@ class DefaultDb implements Database {
           file = JSON.parse(file);
         } catch {}
 
+        if (file.type === "Buffer" && Array.isArray(file.data))
+          file = Buffer.from(file.data);
+
         this.cache[key] = file;
       }
 
@@ -94,14 +97,15 @@ class DefaultDb implements Database {
     return (this.cache[key] = data);
   }
 
+  /**
+   * Checks whether or not the key is in the database.
+   * @param key The unique key.
+   */
   public async contains(key: any) {
     let res;
 
     if (this.cache.hasOwnProperty(key)) res = true;
-    else {
-      res = !!(await readFile(`${DATA_DIR}/${key}.dat`).catch(() => false));
-      console.log(res);
-    }
+    else res = !!(await readFile(`${DATA_DIR}/${key}.dat`).catch(() => false));
 
     return res;
   }

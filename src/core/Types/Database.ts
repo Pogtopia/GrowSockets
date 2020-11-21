@@ -10,7 +10,7 @@ export interface Database {
    * Fetches data from the database.
    * @param key The unique key.
    */
-  get: (key: any) => any;
+  get: <T>(key: any) => Promise<T>;
 
   /**
    * Sets or replace the key's data.
@@ -19,5 +19,5 @@ export interface Database {
    * @param key The unique key.
    * @param data The data of the key.
    */
-  set: (key: any, data: any) => any;
+  set: (key: any, data: any) => Promise<any>;
 }

@@ -10,7 +10,7 @@ class DefaultCache implements Cache {
    * Gives you an array of keys which can be filtered by a pattern.
    * @param pattern The pattern to find within the cache.
    */
-  public keys(pattern: string) {
+  public async keys(pattern: string) {
     pattern = pattern.replace(new RegExp("\\*", "g"), "\\w*?");
 
     return Object.keys(this.data).filter((key) =>
@@ -23,7 +23,7 @@ class DefaultCache implements Cache {
    * @param key They key identifier.
    * @param val The value the key is associated with.
    */
-  public set(key: any, val) {
+  public async set(key: any, val) {
     return (this.data[key] = val);
   }
 
@@ -32,7 +32,7 @@ class DefaultCache implements Cache {
    * Returns true if the data was successfully deleted from the cache.
    * @param key The key identifier.
    */
-  public remove(key: any) {
+  public async remove(key: any) {
     const res = !!this.data[key];
     delete this.data[key];
 
@@ -43,7 +43,7 @@ class DefaultCache implements Cache {
    * Fetches the value of the key in the cache.
    * @param key The key identifier.
    */
-  public get(key: any) {
+  public async get(key: any) {
     const data = this.data[key];
     try {
       return JSON.parse(data);
@@ -56,7 +56,7 @@ class DefaultCache implements Cache {
    * Checks whether or not a key exists in the cache.
    * @param key The key indentifier.
    */
-  public contains(key: any): boolean {
+  public async contains(key: any): Promise<boolean> {
     return this.data.hasOwnProperty(key);
   }
 }

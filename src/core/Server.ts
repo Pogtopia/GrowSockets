@@ -2,14 +2,17 @@ import { EventEmitter } from "events";
 import Wrapper from "./Wrapper";
 import Http from "./Http";
 import DefaultCache from "./Cache/Default";
+import DefaultDb from "./Database/Default";
 
 // Types
 import { Config } from "./Types/Config";
 import { Cache } from "./Types/Cache";
+import { Database } from "./Types/Database";
 
 class Server extends EventEmitter {
   private port: number;
   public cache: Cache;
+  public db: Database;
 
   constructor(config?: Config) {
     super();
@@ -19,6 +22,7 @@ class Server extends EventEmitter {
         port: 17091,
         http: {},
         cache: new DefaultCache(),
+        db: new DefaultDb(),
       };
 
     if (config.http.enabled) {
