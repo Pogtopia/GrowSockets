@@ -1,12 +1,17 @@
-import { readFile, writeFile } from "fs/promises";
+import { readFile, writeFile, unlink } from "fs/promises";
 import { existsSync, mkdirSync } from "fs";
+import * as zlib from "zlib";
 
+// Types
+import { Database } from "../Types/Database";
+
+// Constants
 const DATA_DIR = `${__dirname}/data`;
 
 /**
  * The class for the default database which uses fs.
  */
-class DefaultDb {
+class DefaultDb implements Database {
   private cache = {};
 
   constructor(saveInterval: number = 60 * 30 * 1000) {
@@ -23,6 +28,10 @@ class DefaultDb {
       let data = this.cache[key];
       if (typeof data === "object") data = JSON.stringify(data);
 
+      data = zlib.deflateSync(data, {
+        level: zlib.constants.Z_BEST_COMPRESSION,
+      });
+
       writeFile(`${DATA_DIR}/${key}.dat`, data);
       delete this.cache[key];
     });
@@ -34,14 +43,12 @@ class DefaultDb {
    * @param key The unique key.
    */
   public async del(key: any) {
-    // do a manual save
-    let data = this.cache[key];
-    if (!data) return false;
+    await unlink(`${DATA_DIR}/${key}.dat`).catch((_) => {});
 
-    if (typeof data === "object") data = JSON.stringify(data);
-    await writeFile(`${DATA_DIR}/${key}.dat`, data); // save
-
+    const res = !!this.cache[key];
     delete this.cache[key];
+
+    return res;
   }
 
   /**
@@ -55,10 +62,16 @@ class DefaultDb {
       let file = null;
 
       try {
-        file = (await readFile(`${DATA_DIR}/${key}.dat`))?.toString();
+        file = await readFile(`${DATA_DIR}/${key}.dat`);
       } catch {}
 
       if (file) {
+        file = zlib
+          .inflateSync(file, {
+            level: zlib.constants.Z_BEST_COMPRESSION,
+          })
+          ?.toString();
+
         try {
           file = JSON.parse(file);
         } catch {}
@@ -79,6 +92,18 @@ class DefaultDb {
    */
   public async set(key: any, data: any) {
     return (this.cache[key] = data);
+  }
+
+  public async contains(key: any) {
+    let res;
+
+    if (this.cache.hasOwnProperty(key)) res = true;
+    else {
+      res = !!(await readFile(`${DATA_DIR}/${key}.dat`).catch(() => false));
+      console.log(res);
+    }
+
+    return res;
   }
 }
 
