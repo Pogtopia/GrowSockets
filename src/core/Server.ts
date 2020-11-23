@@ -6,13 +6,11 @@ import DefaultDb from "./Database/Default";
 
 // Types
 import { Config } from "./Types/Config";
-import { Cache } from "./Types/Cache";
-import { Database } from "./Types/Database";
 
 class Server<C, D> extends EventEmitter {
   private port: number;
-  public cache: C | Cache;
-  public db: D | Database;
+  public cache: C;
+  public db: D;
 
   constructor(config?: Config<C, D>) {
     super();
@@ -21,8 +19,8 @@ class Server<C, D> extends EventEmitter {
       config = {
         port: 17091,
         http: {},
-        cache: new DefaultCache(),
-        db: new DefaultDb(),
+        cache: new DefaultCache() as any,
+        db: new DefaultDb() as any,
       };
 
     if (config.http.enabled) {

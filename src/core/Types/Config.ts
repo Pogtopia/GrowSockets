@@ -1,6 +1,3 @@
-import { Cache } from "../Types/Cache";
-import { Database } from "../Types/Database";
-
 /**
  * Options for the http server.
  */
@@ -38,10 +35,10 @@ export interface Config<C, D> {
   /**
    * The cache manager to use.
    */
-  cache?: C | Cache;
+  cache?: C;
 
   /**
    * The database manager to use.
    */
-  db?: D | Database;
+  db?: D;
 }
