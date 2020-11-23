@@ -6,10 +6,10 @@ import Variant from "./Packets/Variant";
 import { Sendable } from "./Types/Sendable";
 import { PeerData } from "./Types/PeerData";
 
-class Peer<C, D> {
+class Peer {
   public data: PeerData;
 
-  constructor(private server: Server<C, D>, netID: number) {
+  constructor(private server: Server<any, any>, netID: number) {
     this.data = {
       netID,
     };
@@ -19,7 +19,7 @@ class Peer<C, D> {
    * Fetches peer data from the cache (uses the netID)
    */
   public async getDataFromCache() {
-    const data = await (this.server.cache as any).get(this.data.netID);
+    const data = await this.server.cache.get(this.data.netID);
     if (data) this.data = data;
   }
 
@@ -27,7 +27,7 @@ class Peer<C, D> {
    * Sets the user data in cache.
    */
   public async setDataToCache() {
-    return await (this.server.cache as any).set(this.data.netID, this.data);
+    return await this.server.cache.set(this.data.netID, this.data);
   }
 
   /**
@@ -36,7 +36,7 @@ class Peer<C, D> {
    */
   public async getDataFromDatabase(rid?: string) {
     if (!rid) rid = this.data.rid;
-    const data = await (this.server.db as any).get(rid);
+    const data = await this.server.db.get(rid);
 
     if (data) {
       data.netID = this.data.netID;
@@ -50,7 +50,7 @@ class Peer<C, D> {
    */
   public async setDataToDatabase(rid?: string) {
     if (!rid) rid = this.data.rid;
-    (this.server.db as any).set(rid, this.data);
+    this.server.db.set(rid, this.data);
   }
 
   /**
