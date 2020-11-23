@@ -9,12 +9,12 @@ import { Config } from "./Types/Config";
 import { Cache } from "./Types/Cache";
 import { Database } from "./Types/Database";
 
-class Server extends EventEmitter {
+class Server<C, D> extends EventEmitter {
   private port: number;
-  public cache: Cache;
-  public db: Database;
+  public cache: C | Cache;
+  public db: D | Database;
 
-  constructor(config?: Config) {
+  constructor(config?: Config<C, D>) {
     super();
 
     if (!config)
@@ -34,6 +34,7 @@ class Server extends EventEmitter {
     }
 
     this.cache = config.cache;
+    this.db = config.db;
     this.port = config.port;
   }
 

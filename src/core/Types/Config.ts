@@ -24,7 +24,7 @@ export interface HTTPOptions {
 /**
  * The configuration for the server.
  */
-export interface Config {
+export interface Config<C, D> {
   /**
    * The port to use for the server. Defaults to `17091`
    */
@@ -38,10 +38,10 @@ export interface Config {
   /**
    * The cache manager to use.
    */
-  cache?: Cache;
+  cache?: C | Cache;
 
   /**
    * The database manager to use.
    */
-  db?: Database;
+  db?: D | Database;
 }
