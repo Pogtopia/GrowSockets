@@ -7,12 +7,28 @@ import DefaultDb from "./Database/Default";
 // Types
 import { Config } from "./Types/Config";
 
-class Server<C, D> extends EventEmitter {
+/**
+ * A class that represents the Server.
+ */
+class Server<A, B, C> extends EventEmitter {
   private port: number;
-  public cache: C;
-  public db: D;
 
-  constructor(config?: Config<C, D>) {
+  /**
+   * Cache object that contains functions to manipulate the cache.
+   */
+  public cache: A;
+
+  /**
+   * Database object that contains functions to manipulate the Database.
+   */
+  public db: B;
+
+  /**
+   * Server internal data, use this to store anything you want.
+   */
+  public data: C;
+
+  constructor(config?: Config<A, B>) {
     super();
 
     if (!config)

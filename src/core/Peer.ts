@@ -9,7 +9,7 @@ import { PeerData } from "./Types/PeerData";
 class Peer {
   public data: PeerData;
 
-  constructor(private server: Server<any, any>, netID: number) {
+  constructor(private server: Server<any, any, any>, netID: number) {
     this.data = {
       netID,
     };
