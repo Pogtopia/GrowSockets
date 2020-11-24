@@ -7,10 +7,10 @@ import { Sendable } from "./Types/Sendable";
 //import { PeerData } from "./Types/PeerData";
 
 class Peer<T> {
-  public data: T | any;
+  public data: T;
 
   constructor(public server: Server<any, any, any>, netID: number) {
-    this.data = {
+    (this.data as any) = {
       netID,
     };
   }
@@ -19,7 +19,7 @@ class Peer<T> {
    * Fetches peer data from the cache (uses the netID)
    */
   public async getDataFromCache() {
-    const data = await this.server.cache.get(`player_${this.data.netID}`);
+    const data = await this.server.cache.get(`player_${(this.data as any).netID}`);
     if (data) this.data = data;
   }
 
@@ -27,7 +27,7 @@ class Peer<T> {
    * Sets the user data in cache.
    */
   public async setDataToCache() {
-    return await this.server.cache.set(`player_${this.data.netID}`, this.data);
+    return await this.server.cache.set(`player_${(this.data as any).netID}`, this.data);
   }
 
   /**
@@ -35,11 +35,11 @@ class Peer<T> {
    * @param rid The rid of the peer
    */
   public async getDataFromDatabase(rid?: string) {
-    if (!rid) rid = this.data.rid;
+    if (!rid) rid = (this.data as any).rid;
     const data = await this.server.db.get(`player_${rid}`);
 
     if (data) {
-      data.netID = this.data.netID;
+      data.netID = (this.data as any).netID;
       this.data = data;
     }
   }
@@ -49,7 +49,7 @@ class Peer<T> {
    * @param rid The rid of the peer
    */
   public async setDataToDatabase(rid?: string) {
-    if (!rid) rid = this.data.rid;
+    if (!rid) rid = (this.data as any).rid;
     this.server.db.set(`player_${rid}`, this.data);
   }
 
@@ -58,7 +58,7 @@ class Peer<T> {
    * @param data An argument of packets that contains the `parse()` function or just an array of Buffers.
    */
   public send(...data: Sendable[]) {
-    Peer.send(this.data.netID, ...data);
+    Peer.send((this.data as any).netID, ...data);
   }
 
   /**
