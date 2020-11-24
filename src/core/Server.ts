@@ -39,7 +39,7 @@ class Server<A, B, C> extends EventEmitter {
         db: new DefaultDb() as any,
       };
 
-    if (config.http.enabled) {
+    if (config.http?.enabled) {
       this.log("HTTP Server Started.");
       Http(
         config.http.serverPort || 17091,
@@ -49,7 +49,7 @@ class Server<A, B, C> extends EventEmitter {
 
     this.cache = config.cache;
     this.db = config.db;
-    this.port = config.port;
+    this.port = config.port ?? 17091;
   }
 
   /**
