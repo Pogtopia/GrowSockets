@@ -9,7 +9,7 @@ import { PeerData } from "./Types/PeerData";
 class Peer {
   public data: PeerData;
 
-  constructor(private server: Server<any, any, any>, netID: number) {
+  constructor(public server: Server<any, any, any>, netID: number) {
     this.data = {
       netID,
     };
@@ -19,7 +19,7 @@ class Peer {
    * Fetches peer data from the cache (uses the netID)
    */
   public async getDataFromCache() {
-    const data = await this.server.cache.get(this.data.netID);
+    const data = await this.server.cache.get(`player_${this.data.netID}`);
     if (data) this.data = data;
   }
 
@@ -27,7 +27,7 @@ class Peer {
    * Sets the user data in cache.
    */
   public async setDataToCache() {
-    return await this.server.cache.set(this.data.netID, this.data);
+    return await this.server.cache.set(`player_${this.data.netID}`, this.data);
   }
 
   /**
@@ -36,7 +36,7 @@ class Peer {
    */
   public async getDataFromDatabase(rid?: string) {
     if (!rid) rid = this.data.rid;
-    const data = await this.server.db.get(rid);
+    const data = await this.server.db.get(`player_${rid}`);
 
     if (data) {
       data.netID = this.data.netID;
@@ -50,7 +50,7 @@ class Peer {
    */
   public async setDataToDatabase(rid?: string) {
     if (!rid) rid = this.data.rid;
-    this.server.db.set(rid, this.data);
+    this.server.db.set(`player_${rid}`, this.data);
   }
 
   /**
