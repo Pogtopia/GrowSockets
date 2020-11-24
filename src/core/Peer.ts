@@ -4,10 +4,10 @@ import Variant from "./Packets/Variant";
 
 // types
 import { Sendable } from "./Types/Sendable";
-import { PeerData } from "./Types/PeerData";
+//import { PeerData } from "./Types/PeerData";
 
-class Peer {
-  public data: PeerData;
+class Peer<T> {
+  public data: T | any;
 
   constructor(public server: Server<any, any, any>, netID: number) {
     this.data = {
