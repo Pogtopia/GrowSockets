@@ -60,8 +60,13 @@ class Variant {
         case "number": {
           let bytes;
 
-          if (arg < 0) bytes = new Int32Array(1);
-          else bytes = new Uint32Array(1);
+          if (arg < 0) {
+            bytes = new Int32Array(1);
+            buf.push(ArgType.SIGNED_INT);
+          } else {
+            bytes = new Uint32Array(1);
+            buf.push(ArgType.UNSIGNED_INT);
+          }
 
           bytes[0] = arg;
 
