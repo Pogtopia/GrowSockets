@@ -32,7 +32,7 @@ class TankPacket {
     buf.writeInt32LE(this.data.netID ?? 0, 8);
     buf.writeInt32LE(this.data.targetNetID ?? 0, 12);
     buf.writeUInt32LE(this.data.state ?? 0x8, 16);
-    buf.writeUInt32LE(this.data.info ?? 0, 24);
+    buf.writeInt32LE(this.data.info ?? 0, 24);
     buf.writeFloatLE(this.data.xPos ?? 0, 28);
     buf.writeFloatLE(this.data.yPos ?? 0, 32);
     buf.writeFloatLE(this.data.xSpeed ?? 0, 36);
