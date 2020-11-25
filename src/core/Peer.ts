@@ -19,7 +19,9 @@ class Peer<T> {
    * Fetches peer data from the cache (uses the netID)
    */
   public async getDataFromCache() {
-    const data = await this.server.cache.get(`player_${(this.data as any).netID}`);
+    const data = await this.server.cache.get(
+      `player_${(this.data as any).netID}`
+    );
     if (data) this.data = data;
   }
 
@@ -27,7 +29,17 @@ class Peer<T> {
    * Sets the user data in cache.
    */
   public async setDataToCache() {
-    return await this.server.cache.set(`player_${(this.data as any).netID}`, this.data);
+    return await this.server.cache.set(
+      `player_${(this.data as any).netID}`,
+      this.data
+    );
+  }
+
+  /**
+   * Deletes the peer from the cache
+   */
+  public async deleteFromCache() {
+    return await this.server.cache.remove(`player_${(this.data as any).netID}`);
   }
 
   /**
@@ -97,6 +109,14 @@ class Peer<T> {
    */
   public static new(server, netID) {
     return new Peer(server, netID);
+  }
+
+  /**
+   * Disconnects the peer.
+   * @param type Type of disconnection. Defaults to `later`.
+   */
+  public disconnect(type: "now" | "later" | "normal" = "later") {
+    Wrapper.disconnect((this.data as any).netID, type);
   }
 }
 

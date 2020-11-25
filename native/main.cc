@@ -10,6 +10,12 @@ Napi::FunctionReference emitter;
 
 unsigned int netID = 0;
 
+enum Disconnect {
+  NOW,
+  LATER,
+  NORMAL
+};
+
 template <typename T>
 void __finalizer(Napi::Env env, T* data) {
   delete[] data;
@@ -126,13 +132,39 @@ void __set_emitter(ARG) {
   emitter = Napi::Persistent(info[0].As<Napi::Function>());
 }
 
+void __disconnect(ARG) {
+  unsigned int peerID = info[0].As<Napi::Number>().Uint32Value();
+  Disconnect dType = static_cast<Disconnect>(info[1].As<Napi::Number>().Uint32Value());
+  
+  ENetPeer* peer = peers[peerID];
+
+  if (!peer) return;
+  switch (dType) {
+    case NOW: {
+      enet_peer_disconnect_now(peer, 0);
+      break;
+    }
+
+    case LATER: {
+      enet_peer_disconnect_later(peer, 0);
+      break;
+    }
+
+    case NORMAL: {
+      enet_peer_disconnect(peer, 0);
+      break;
+    }
+  }
+}
+
 Napi::Object __reg(Napi::Env env, Napi::Object exports) {
-  exports["init"]     = Napi::Function::New(env, __init);
-  exports["send"]     = Napi::Function::New(env, __send);
-  exports["accept"]   = Napi::Function::New(env, __accept);
-  exports["setNetID"] = Napi::Function::New(env, __set_netID);
-  exports["deInit"]   = Napi::Function::New(env, __close);
-  exports["emitter"]  = Napi::Function::New(env, __set_emitter);
+  exports["init"]       = Napi::Function::New(env, __init);
+  exports["send"]       = Napi::Function::New(env, __send);
+  exports["accept"]     = Napi::Function::New(env, __accept);
+  exports["setNetID"]   = Napi::Function::New(env, __set_netID);
+  exports["deInit"]     = Napi::Function::New(env, __close);
+  exports["emitter"]    = Napi::Function::New(env, __set_emitter);
+  exports["disconnect"] = Napi::Function::New(env, __disconnect);
 
   return exports;
 }

@@ -49,6 +49,34 @@ const Wrapper = {
    * Set the emitter required by the server to emit events.
    */
   emitter: (emit: (...args: any[]) => any[]) => native.emitter(emit),
+
+  /**
+   * Disconnets a peer.
+   * @param netID The netID of the peer.
+   * @param type The type of disconnection. Defaults to `later`.
+   */
+  disconnect: (netID: number, type: "now" | "later" | "normal" = "later") => {
+    let val: number;
+
+    switch (type) {
+      case "now": {
+        val = 0;
+        break;
+      }
+
+      case "later": {
+        val = 1;
+        break;
+      }
+
+      case "normal": {
+        val = 2;
+        break;
+      }
+    }
+
+    return native.disconnect(netID, val);
+  },
 };
 
 export default Wrapper;
