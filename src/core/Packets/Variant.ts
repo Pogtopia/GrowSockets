@@ -76,6 +76,20 @@ class Variant {
         }
 
         case "object": {
+          if (!Array.isArray(arg)) return;
+
+          const type = ArgType[`FLOAT_${arg.length}`];
+          if (!type) return;
+
+          buf.push(type);
+
+          arg.forEach((float) => {
+            const bytes = new Float32Array(1);
+            bytes[0] = float;
+
+            const uint8_buf = new Uint8ClampedArray(bytes.buffer);
+            buf = [...buf, ...uint8_buf];
+          });
           break;
         }
       }

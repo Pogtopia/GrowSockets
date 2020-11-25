@@ -8,7 +8,10 @@ export type Arg = string | number[] | number;
  */
 export enum ArgType {
   NONE,
-  STRING = 0x2,
+  FLOAT_1,
+  STRING,
+  FLOAT_2,
+  FLOAT_3,
   SIGNED_INT = 0x5,
   UNSIGNED_INT = 0x9,
 }
