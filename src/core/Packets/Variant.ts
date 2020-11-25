@@ -97,8 +97,8 @@ class Variant {
 
     return TankPacket.from({
       type: 0x1,
-      netID: this.options.netID || -1,
-      info: this.options.delay || 0,
+      netID: this.options.netID ?? -1,
+      info: this.options.delay ?? 0,
       data: () => Buffer.from(buf),
     });
   }
