@@ -12,8 +12,8 @@ export enum ArgType {
   STRING,
   FLOAT_2,
   FLOAT_3,
-  SIGNED_INT = 0x5,
-  UNSIGNED_INT = 0x9,
+  UNSIGNED_INT,
+  SIGNED_INT = 0x9,
 }
 
 /**
