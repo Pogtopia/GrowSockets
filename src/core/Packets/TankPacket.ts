@@ -21,6 +21,31 @@ class TankPacket {
   }
 
   /**
+   * Converts a buffer to a tank packet.
+   * @param buf The buffer to convert.
+   */
+  public static fromBuffer(buf: Buffer) {
+    const data: Tank = {
+      type: buf.readUInt32LE(4),
+      netID: buf.readInt32LE(8),
+      targetNetID: buf.readInt32LE(12),
+      state: buf.readUInt32LE(16),
+      info: buf.readInt32LE(24),
+      xPos: buf.readFloatLE(28),
+      yPos: buf.readFloatLE(32),
+      xSpeed: buf.readFloatLE(36),
+      ySpeed: buf.readFloatLE(40),
+      xPunch: buf.readInt32LE(48),
+      yPunch: buf.readInt32LE(52),
+    };
+
+    const dataLength = buf.readUInt32LE(56);
+    if (dataLength > 0) data.data = () => buf.slice(60, 60 + dataLength);
+
+    return new TankPacket(data);
+  }
+
+  /**
    * Converts the TankPacket class to a Buffer
    */
   public parse() {
