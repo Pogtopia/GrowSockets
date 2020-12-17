@@ -2,7 +2,7 @@
 #include <napi.h>
 #include <unordered_map>
 
-#define ARG Napi::CallbackInfo& info
+#define ARG const Napi::CallbackInfo& info
 
 std::unordered_map<unsigned int, ENetPeer*> peers;
 ENetHost* host;
