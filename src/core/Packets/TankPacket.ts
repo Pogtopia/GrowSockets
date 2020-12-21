@@ -26,7 +26,7 @@ class TankPacket {
    */
   public static fromBuffer(buf: Buffer) {
     const data: Tank = {
-      type: buf.readUInt32LE(4),
+      type: buf.readUInt8(4),
       netID: buf.readInt32LE(8),
       targetNetID: buf.readInt32LE(12),
       state: buf.readUInt32LE(16),
