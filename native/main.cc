@@ -166,14 +166,14 @@ void __disconnect(ARG) {
 }
 
 Napi::Object __reg(Napi::Env env, Napi::Object exports) {
-  exports["init"]           = Napi::Function::New(env, __init);
-  exports["send"]           = Napi::Function::New(env, __send);
-  exports["accept"]         = Napi::Function::New(env, __accept);
-  exports["setNetID"]       = Napi::Function::New(env, __set_netID);
-  exports["deInit"]         = Napi::Function::New(env, __close);
-  exports["emitter"]        = Napi::Function::New(env, __set_emitter);
-  exports["disconnect"]     = Napi::Function::New(env, __disconnect);
-  exports["usingNewPacket"] = Napi::Function::New(env, __set_using_new_packet);
+  exports["init"]         = Napi::Function::New(env, __init);
+  exports["send"]         = Napi::Function::New(env, __send);
+  exports["accept"]       = Napi::Function::New(env, __accept);
+  exports["setNetID"]     = Napi::Function::New(env, __set_netID);
+  exports["deInit"]       = Napi::Function::New(env, __close);
+  exports["emitter"]      = Napi::Function::New(env, __set_emitter);
+  exports["disconnect"]   = Napi::Function::New(env, __disconnect);
+  exports["useNewPacket"] = Napi::Function::New(env, __set_using_new_packet);
 
   return exports;
 }
