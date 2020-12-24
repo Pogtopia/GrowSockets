@@ -37,7 +37,10 @@ class Server<A, B, C> extends EventEmitter {
         http: {},
         cache: new DefaultCache() as any,
         db: new DefaultDb() as any,
+        usingNewPacket: false,
       };
+
+    if (config.usingNewPacket) Wrapper.useNewPacket();
 
     if (config.http?.enabled) {
       this.log("HTTP Server Started.");

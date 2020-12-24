@@ -41,4 +41,9 @@ export interface Config<A, B> {
    * The database manager to use.
    */
   db?: B;
+
+  /**
+   * Whether or not to use Growtopia's new packet protocol.
+   */
+  usingNewPacket?: boolean;
 }

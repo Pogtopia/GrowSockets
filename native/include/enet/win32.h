@@ -2,6 +2,7 @@
  @file  win32.h
  @brief ENet Win32 header
 */
+#ifdef _WIN32
 #ifndef __ENET_WIN32_H__
 #define __ENET_WIN32_H__
 
@@ -15,6 +16,7 @@
 #endif
 
 #include <stdlib.h>
+#include <stdint.h>
 #include <winsock2.h>
 
 typedef SOCKET ENetSocket;
@@ -53,5 +55,4 @@ typedef fd_set ENetSocketSet;
 #define ENET_SOCKETSET_CHECK(sockset, socket)  FD_ISSET (socket, & (sockset))
 
 #endif /* __ENET_WIN32_H__ */
-
-
+#endif

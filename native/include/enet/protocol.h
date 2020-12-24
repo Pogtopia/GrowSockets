@@ -5,7 +5,7 @@
 #ifndef __ENET_PROTOCOL_H__
 #define __ENET_PROTOCOL_H__
 
-#include "enet/types.h"
+#include "types.h"
 
 enum
 {
@@ -67,6 +67,12 @@ typedef struct _ENetProtocolHeader
    enet_uint16 peerID;
    enet_uint16 sentTime;
 } ENET_PACKED ENetProtocolHeader;
+
+typedef struct _ENetProtocolHeaderUbisoft {
+    enet_uint16 integrity[3];
+    enet_uint16 peerID;
+    enet_uint16 sentTime;
+} ENET_PACKED ENetProtocolHeaderUbisoft;
 
 typedef struct _ENetProtocolCommandHeader
 {

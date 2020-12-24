@@ -7,6 +7,7 @@
 std::unordered_map<unsigned int, ENetPeer*> peers;
 ENetHost* host;
 Napi::FunctionReference emitter;
+bool usingNewPacket = false;
 
 unsigned int netID = 0;
 
@@ -33,8 +34,15 @@ void __init(ARG) {
   address.port = static_cast<uint16_t>(port);
 
   host = enet_host_create(&address, 1024, 2, 0, 0);
+  
   host->checksum = enet_crc32;
+  host->usingNewPacket = usingNewPacket;
+
   enet_host_compress_with_range_coder(host);
+}
+
+void __set_using_new_packet(ARG) {
+  usingNewPacket = true;
 }
 
 void __send(ARG) {
@@ -158,13 +166,14 @@ void __disconnect(ARG) {
 }
 
 Napi::Object __reg(Napi::Env env, Napi::Object exports) {
-  exports["init"]       = Napi::Function::New(env, __init);
-  exports["send"]       = Napi::Function::New(env, __send);
-  exports["accept"]     = Napi::Function::New(env, __accept);
-  exports["setNetID"]   = Napi::Function::New(env, __set_netID);
-  exports["deInit"]     = Napi::Function::New(env, __close);
-  exports["emitter"]    = Napi::Function::New(env, __set_emitter);
-  exports["disconnect"] = Napi::Function::New(env, __disconnect);
+  exports["init"]           = Napi::Function::New(env, __init);
+  exports["send"]           = Napi::Function::New(env, __send);
+  exports["accept"]         = Napi::Function::New(env, __accept);
+  exports["setNetID"]       = Napi::Function::New(env, __set_netID);
+  exports["deInit"]         = Napi::Function::New(env, __close);
+  exports["emitter"]        = Napi::Function::New(env, __set_emitter);
+  exports["disconnect"]     = Napi::Function::New(env, __disconnect);
+  exports["usingNewPacket"] = Napi::Function::New(env, __set_using_new_packet);
 
   return exports;
 }

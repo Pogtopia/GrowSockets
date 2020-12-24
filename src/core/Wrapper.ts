@@ -12,6 +12,12 @@ const Wrapper = {
   init: (port: number): void => native.init(port),
 
   /**
+   * Whether or not to use growtopia's new packet protocol.
+   * Make sure to call this before starting the server.
+   */
+  useNewPacket: (): void => native.useNewPacket(),
+
+  /**
    * Send packets to a specific peer id.
    * @param id The id of the peer.
    * @param count The amount of packets to send.

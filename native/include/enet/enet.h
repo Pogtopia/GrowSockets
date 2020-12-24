@@ -13,19 +13,19 @@ extern "C"
 #include <stdlib.h>
 
 #ifdef _WIN32
-#include "enet/win32.h"
+#include "win32.h"
 #else
-#include "enet/unix.h"
+#include "unix.h"
 #endif
 
-#include "enet/types.h"
-#include "enet/protocol.h"
-#include "enet/list.h"
-#include "enet/callbacks.h"
+#include "types.h"
+#include "protocol.h"
+#include "list.h"
+#include "callbacks.h"
 
 #define ENET_VERSION_MAJOR 1
 #define ENET_VERSION_MINOR 3
-#define ENET_VERSION_PATCH 15
+#define ENET_VERSION_PATCH 14
 #define ENET_VERSION_CREATE(major, minor, patch) (((major)<<16) | ((minor)<<8) | (patch))
 #define ENET_VERSION_GET_MAJOR(version) (((version)>>16)&0xFF)
 #define ENET_VERSION_GET_MINOR(version) (((version)>>8)&0xFF)
@@ -86,10 +86,9 @@ typedef enum _ENetSocketShutdown
  * but not for enet_host_create.  Once a server responds to a broadcast, the
  * address is updated from ENET_HOST_BROADCAST to the server's actual IP address.
  */
-typedef struct _ENetAddress
-{
-   enet_uint32 host;
-   enet_uint16 port;
+typedef struct _ENetAddress {
+	enet_uint32 host;
+	enet_uint16 port;
 } ENetAddress;
 
 /**
@@ -250,11 +249,6 @@ typedef struct _ENetChannel
    ENetList     incomingUnreliableCommands;
 } ENetChannel;
 
-typedef enum _ENetPeerFlag
-{
-   ENET_PEER_FLAG_NEEDS_DISPATCH = (1 << 0)
-} ENetPeerFlag;
-
 /**
  * An ENet peer which data packets may be sent or received from. 
  *
@@ -316,9 +310,7 @@ typedef struct _ENetPeer
    ENetList      outgoingReliableCommands;
    ENetList      outgoingUnreliableCommands;
    ENetList      dispatchedCommands;
-   enet_uint16   flags;
-   enet_uint8    roundTripTimeRemainder;
-   enet_uint8    roundTripTimeVarianceRemainder;
+   int           needsDispatch;
    enet_uint16   incomingUnsequencedGroup;
    enet_uint16   outgoingUnsequencedGroup;
    enet_uint32   unsequencedWindow [ENET_PEER_UNSEQUENCED_WINDOW_SIZE / 32]; 
@@ -400,6 +392,7 @@ typedef struct _ENetHost
    size_t               duplicatePeers;              /**< optional number of allowed peers from duplicate IPs, defaults to ENET_PROTOCOL_MAXIMUM_PEER_ID */
    size_t               maximumPacketSize;           /**< the maximum allowable packet size that may be sent or received on a peer */
    size_t               maximumWaitingData;          /**< the maximum aggregate amount of buffer space a peer may use waiting for packets to be delivered */
+   size_t               usingNewPacket;              /**< the New and Improved! */
 } ENetHost;
 
 /**
