@@ -10,7 +10,7 @@
   "devDependencies": {},
   "scripts": {
     "install": "(cd native && node-gyp configure build -j 8 --release) && (npm run transpile)",
-    "transpile": "rm -rf dist && mkdir dist && cd src && tsc",
+    "transpile": "(rm -rf dist || rmdir /Q /S dist) && mkdir dist && cd src && tsc",
     "test": "ts-node --project src/tsconfig.json test"
   },
   "author": "Alexander9673",
